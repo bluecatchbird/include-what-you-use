@@ -1,0 +1,25 @@
+FROM debian:9
+
+RUN apt-get update && \
+    apt-get -y upgrade && \
+    apt-get -y install wget gnupg software-properties-common git
+
+RUN add-apt-repository "deb http://apt.llvm.org/stretch/ llvm-toolchain-stretch-6.0 main" && \
+    wget https://apt.llvm.org/llvm-snapshot.gpg.key -O -| apt-key add -
+
+RUN apt-get update && \
+    apt-get -y upgrade && \
+    apt-get -y install g++ clang-6.0 libclang-common-6.0-dev libclang-6.0-dev \
+                       libclang1-6.0 llvm-6.0 llvm-6.0-dev cmake \
+                       libncurses5-dev libncursesw5-dev zlib1g-dev
+
+RUN mkdir include-what-you-use
+WORKDIR include-what-you-use
+
+COPY . .
+
+RUN mkdir build
+WORKDIR build
+
+RUN cmake .. && \
+    make
